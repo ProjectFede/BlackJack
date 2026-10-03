@@ -25,7 +25,6 @@ const mazzo = creaMazzo();
 console.log(mazzo.length);
 
 mescolaMazzo(mazzo);
-console.log(mazzo.length);
 
 function pescaCarta(mazzo) {
     if (mazzo.length === 0) {
@@ -37,3 +36,19 @@ function pescaCarta(mazzo) {
     return cartaPescata;
 }
 
+const manoGiocatore = [];
+const manoDealer = [];
+
+function distribuisciCarte(carte, mano, numeroCarte) {
+    for (let i = 0; i < numeroCarte; i++) {
+        mano.push(pescaCarta(carte));
+    }
+}
+for (let i = 0; i < 2; i++) {
+    distribuisciCarte(mazzo, manoGiocatore, 1);
+    distribuisciCarte(mazzo, manoDealer, 1);
+}
+
+console.log("Giocatore:", manoGiocatore);
+console.log("Dealer:", manoDealer);
+console.log("Carte rimanenti nel mazzo:", mazzo.length); 
