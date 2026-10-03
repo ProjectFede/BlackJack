@@ -49,10 +49,6 @@ for (let i = 0; i < 2; i++) {
     distribuisciCarte(mazzo, manoDealer, 1);
 }
 
-console.log("Giocatore:", manoGiocatore);
-console.log("Dealer:", manoDealer);
-console.log("Carte rimanenti nel mazzo:", mazzo.length); 
-
 function calcolaValoreMano(mano) {
     let valoreTotale = 0;
     let numeroAssi = 0;
