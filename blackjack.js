@@ -78,3 +78,17 @@ function pescaGiocatore(mano, mazzo) {
     }
     return valoreMano;
 }
+
+function pescaDealer(mano, mazzo) {
+    let valoreMano = calcolaValoreMano(mano);
+    while (valoreMano < 17) {
+        const cartaPescata = pescaCarte(mazzo);
+        mano.push(cartaPescata);
+        valoreMano = calcolaValoreMano(mano);
+    }
+    if (valoreMano > 21) {
+        console.log("Il dealer ha sballato! Valore della mano:", valoreMano);
+    }
+    return valoreMano;
+}
+
