@@ -26,13 +26,13 @@ console.log(mazzo.length);
 
 mescolaMazzo(mazzo);
 
-function pescaCarta(mazzo) {
+function pescaCarte(mazzo) {
     if (mazzo.length === 0) {
         throw new Error("Il mazzo è vuoto. Non ci sono più carte da pescare.");
     }
-        const cartaPescata = mazzo.shift();
-        console.log("Carta pescata:", cartaPescata);
-        console.log("Carte rimanenti nel mazzo:", mazzo.length);
+    const cartaPescata = mazzo.shift();
+    console.log("Carta pescata:", cartaPescata);
+    console.log("Carte rimanenti nel mazzo:", mazzo.length);
     return cartaPescata;
 }
 
@@ -41,7 +41,7 @@ const manoDealer = [];
 
 function distribuisciCarte(carte, mano, numeroCarte) {
     for (let i = 0; i < numeroCarte; i++) {
-        mano.push(pescaCarta(carte));
+        mano.push(pescaCarte(carte));
     }
 }
 for (let i = 0; i < 2; i++) {
@@ -59,7 +59,7 @@ function calcolaValoreMano(mano) {
         } else if (['Jack', 'Donna', 'Re'].includes(carta.valore)) {
             valoreTotale += 10;
         } else {
-            valoreTotale += parseInt(carta.valore);
+            valoreTotale += parseInt(carta.valore, 10);
         }
     }
     while (valoreTotale > 21 && numeroAssi > 0) {
@@ -67,4 +67,14 @@ function calcolaValoreMano(mano) {
         numeroAssi--;
     }
     return valoreTotale;
+}
+
+function pescaGiocatore(mano, mazzo) {
+    const cartaPescata = pescaCarte(mazzo);
+    mano.push(cartaPescata);
+    const valoreMano = calcolaValoreMano(mano);
+    if (valoreMano > 21) {
+        console.log("Hai sballato! Valore della mano:", valoreMano);
+    }
+    return valoreMano;
 }
