@@ -52,3 +52,23 @@ for (let i = 0; i < 2; i++) {
 console.log("Giocatore:", manoGiocatore);
 console.log("Dealer:", manoDealer);
 console.log("Carte rimanenti nel mazzo:", mazzo.length); 
+
+function calcolaValoreMano(mano) {
+    let valoreTotale = 0;
+    let numeroAssi = 0;
+    for (const carta of mano) {
+        if (carta.valore === 'Asso') {
+            numeroAssi++;
+            valoreTotale += 11;
+        } else if (['Jack', 'Donna', 'Re'].includes(carta.valore)) {
+            valoreTotale += 10;
+        } else {
+            valoreTotale += parseInt(carta.valore);
+        }
+    }
+    while (valoreTotale > 21 && numeroAssi > 0) {
+        valoreTotale -= 10;
+        numeroAssi--;
+    }
+    return valoreTotale;
+}
