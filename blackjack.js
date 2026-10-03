@@ -73,9 +73,6 @@ function pescaGiocatore(mano, mazzo) {
     const cartaPescata = pescaCarte(mazzo);
     mano.push(cartaPescata);
     const valoreMano = calcolaValoreMano(mano);
-    if (valoreMano > 21) {
-        console.log("Hai sballato! Valore della mano:", valoreMano);
-    }
     return valoreMano;
 }
 
@@ -86,9 +83,40 @@ function pescaDealer(mano, mazzo) {
         mano.push(cartaPescata);
         valoreMano = calcolaValoreMano(mano);
     }
-    if (valoreMano > 21) {
-        console.log("Il dealer ha sballato! Valore della mano:", valoreMano);
-    }
     return valoreMano;
+}
+
+function haBlackjack(mano) {
+    return mano.length === 2 && calcolaValoreMano(mano) === 21;
+}
+
+function determinaVincitore(manoDelGiocatore, manoDelDealer) {
+    const valoreGiocatore = calcolaValoreMano(manoDelGiocatore);
+    const valoreDealer = calcolaValoreMano(manoDelDealer);
+    const blackjackGiocatore = haBlackjack(manoDelGiocatore);
+    const blackjackDealer = haBlackjack(manoDelDealer);
+
+    if (valoreGiocatore > 21) {
+        return "Hai perso! Hai sballato.";
+    }
+    else if (blackjackGiocatore && blackjackDealer) {
+        return "Pareggio! Entrambi avete un Blackjack!";
+    }
+    else if (blackjackGiocatore) {
+        return "Hai vinto con un Blackjack!";
+    }
+    else if (blackjackDealer) {
+        return "Hai perso! Il dealer ha un Blackjack.";
+    }
+    else if (valoreDealer > 21) {
+        return "Hai vinto! Il dealer ha sballato.";
+    }
+    else if (valoreGiocatore > valoreDealer) {
+        return "Hai vinto!";
+    } else if (valoreGiocatore < valoreDealer) {
+        return "Hai perso!";
+    } else {
+        return "Pareggio!";
+    }
 }
 
