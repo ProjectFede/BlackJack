@@ -13,12 +13,12 @@ function creaMazzo() {
     return carte;
 }
 
-function mescolaMazzo(mescolaCarte) {
-    for (let i = mescolaCarte.length - 1; i > 0; i--) {
+function mescolaMazzo(carteMescolate) {
+    for (let i = carteMescolate.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [mescolaCarte[i], mescolaCarte[j]] = [mescolaCarte[j], mescolaCarte[i]];
+        [carteMescolate[i], carteMescolate[j]] = [carteMescolate[j], carteMescolate[i]];
     }
-    return mescolaCarte;
+    return carteMescolate;
 }
 
 const mazzo = creaMazzo();
@@ -26,4 +26,14 @@ console.log(mazzo.length);
 
 mescolaMazzo(mazzo);
 console.log(mazzo.length);
+
+function pescaCarta(mazzo) {
+    if (mazzo.length === 0) {
+        throw new Error("Il mazzo è vuoto. Non ci sono più carte da pescare.");
+    }
+        const cartaPescata = mazzo.shift();
+        console.log("Carta pescata:", cartaPescata);
+        console.log("Carte rimanenti nel mazzo:", mazzo.length);
+    return cartaPescata;
+}
 

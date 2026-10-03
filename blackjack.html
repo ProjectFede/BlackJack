@@ -16,6 +16,7 @@
                 <div id="player-hand" class="hand">
                     <h2>Player's Hand</h2>
                     <div class="cards"></div>
+                    <div id="mano"></div>
                     <p>Total: <span id="player-total">0</span></p>
                 </div>
 
@@ -26,11 +27,10 @@
                 </div>
 
                 <div id="controls">
-                    <button id="hit-button">Hit</button>
+                    <button id="hit-button" onclick="pescaCarta(mazzo)">Hit</button>
                     <button id="stand-button">Stand</button>
                     <button id="new-game-button">New Game</button>
                 </div>
-
                 <div id="message"></div>
             </section>
         </main>
