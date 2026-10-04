@@ -1,37 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">    
+<html lang="it">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Blackjack Game</title>
-        <link rel="stylesheet" href="styles.css">
+        <title>Blackjack</title>
+        <link rel="stylesheet" href="blackjack.css">
     </head>
     <body>
         <header>
-            <h1>Blackjack Game</h1>
+            <h1>Blackjack</h1>
         </header>
 
         <main>
-            <section id="game">
-                <div id="player-hand" class="hand">
-                    <h2>Player's Hand</h2>
-                    <div class="cards"></div>
-                    <div id="mano"></div>
-                    <p>Total: <span id="player-total">0</span></p>
+            <section id="gioco">
+                <div id="mano-giocatore" class="mano">
+                    <h2>Mano del giocatore</h2>
+                    <div id="carte-giocatore" class="carte"></div>
+                    <p>Totale: <span id="totale-giocatore">0</span></p>
                 </div>
 
-                <div id="dealer-hand" class="hand">
-                    <h2>Dealer's Hand</h2>
-                    <div class="cards"></div>
-                    <p>Total: <span id="dealer-total">0</span></p>
+                <div id="mano-dealer" class="mano">
+                    <h2>Mano del dealer</h2>
+                    <div id="carte-dealer" class="carte"></div>
+                    <p>Totale: <span id="totale-dealer">0</span></p>
                 </div>
 
-                <div id="controls">
-                    <button id="hit-button" onclick="">Pesca</button>
-                    <button id="stand-button">Fermati</button>
-                    <button id="new-game-button">Lascia</button>
+                <div id="controlli">
+                    <button id="pulsante-pesca" onclick="pescaGiocatore()">Pesca</button>
+                    <button id="pulsante-stai" onclick="stai()">Stai</button>
+                    <button id="nuova-partita" onclick="nuovaPartita()">Nuova partita</button>
                 </div>
-                <div id="message"></div>
+                <div id="risultato"></div>
             </section>
         </main>
     <script src="blackjack.js"></script>

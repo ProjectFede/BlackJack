@@ -24,8 +24,6 @@ function mescolaMazzo(carteMescolate) {
 const mazzo = creaMazzo();
 console.log(mazzo.length);
 
-mescolaMazzo(mazzo);
-
 function pescaCarte(mazzo) {
     if (mazzo.length === 0) {
         throw new Error("Il mazzo è vuoto. Non ci sono più carte da pescare.");
@@ -38,17 +36,13 @@ function pescaCarte(mazzo) {
 
 const manoGiocatore = [];
 const manoDealer = [];
+let partitaFinita = false;
 
 function distribuisciCarte(carte, mano, numeroCarte) {
     for (let i = 0; i < numeroCarte; i++) {
         mano.push(pescaCarte(carte));
     }
 }
-for (let i = 0; i < 2; i++) {
-    distribuisciCarte(mazzo, manoGiocatore, 1);
-    distribuisciCarte(mazzo, manoDealer, 1);
-}
-
 function calcolaValoreMano(mano) {
     let valoreTotale = 0;
     let numeroAssi = 0;
@@ -115,18 +109,18 @@ function determinaVincitore(manoDelGiocatore, manoDelDealer) {
     }
 }
 
-let partitaFinita = false;
-
 function pescaGiocatore() {
     if (partitaFinita) {
         return null;
     }
     manoGiocatore.push(pescaCarte(mazzo));
+    let risultato = '';
     if (calcolaValoreMano(manoGiocatore) > 21) {
         partitaFinita = true;
-        return determinaVincitore(manoGiocatore, manoDealer);
+        risultato = determinaVincitore(manoGiocatore, manoDealer);
     }
-    return null;
+    aggiornaSchermata(risultato);
+    return risultato || null;
 }
 
 function stai() {
@@ -135,7 +129,9 @@ function stai() {
     }
     pescaDealer(manoDealer, mazzo);
     partitaFinita = true;
-    return determinaVincitore(manoGiocatore, manoDealer);
+    const risultato = determinaVincitore(manoGiocatore, manoDealer);
+    aggiornaSchermata(risultato);
+    return risultato;
 }
 
 function nuovaPartita() {
@@ -149,8 +145,29 @@ function nuovaPartita() {
         distribuisciCarte(mazzo, manoGiocatore, 1);
         distribuisciCarte(mazzo, manoDealer, 1);
     }
-    return {
-        manoGiocatore: manoGiocatore,
-        manoDealer: manoDealer
-    };
+    aggiornaSchermata();
+    if (haBlackjack(manoGiocatore) || haBlackjack(manoDealer)) {
+        partitaFinita = true;
+        aggiornaSchermata(determinaVincitore(manoGiocatore, manoDealer));
+    }
 }
+
+function mostraMano(elemento, mano) {
+    elemento.textContent = '';
+    for (const carta of mano) {
+        const elementoCarta = document.createElement('span');
+        elementoCarta.className = 'carta';
+        elementoCarta.textContent = `${carta.valore} di ${carta.seme}`;
+        elemento.append(elementoCarta);
+    }
+}
+
+function aggiornaSchermata(messaggio = '') {
+    mostraMano(document.getElementById('carte-giocatore'), manoGiocatore);
+    mostraMano(document.getElementById('carte-dealer'), manoDealer);
+    document.getElementById('totale-giocatore').textContent = calcolaValoreMano(manoGiocatore);
+    document.getElementById('totale-dealer').textContent = calcolaValoreMano(manoDealer);
+    document.getElementById('risultato').textContent = messaggio;
+}
+
+nuovaPartita();
