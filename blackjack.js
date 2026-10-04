@@ -69,13 +69,6 @@ function calcolaValoreMano(mano) {
     return valoreTotale;
 }
 
-function pescaGiocatore(mano, mazzo) {
-    const cartaPescata = pescaCarte(mazzo);
-    mano.push(cartaPescata);
-    const valoreMano = calcolaValoreMano(mano);
-    return valoreMano;
-}
-
 function pescaDealer(mano, mazzo) {
     let valoreMano = calcolaValoreMano(mano);
     while (valoreMano < 17) {
@@ -113,10 +106,51 @@ function determinaVincitore(manoDelGiocatore, manoDelDealer) {
     }
     else if (valoreGiocatore > valoreDealer) {
         return "Hai vinto!";
-    } else if (valoreGiocatore < valoreDealer) {
+    }
+    else if (valoreGiocatore < valoreDealer) {
         return "Hai perso!";
-    } else {
+    }
+    else {
         return "Pareggio!";
     }
 }
 
+let partitaFinita = false;
+
+function pescaGiocatore() {
+    if (partitaFinita) {
+        return null;
+    }
+    manoGiocatore.push(pescaCarte(mazzo));
+    if (calcolaValoreMano(manoGiocatore) > 21) {
+        partitaFinita = true;
+        return determinaVincitore(manoGiocatore, manoDealer);
+    }
+    return null;
+}
+
+function stai() {
+    if (partitaFinita) {
+        return null;
+    }
+    pescaDealer(manoDealer, mazzo);
+    partitaFinita = true;
+    return determinaVincitore(manoGiocatore, manoDealer);
+}
+
+function nuovaPartita() {
+    manoGiocatore.length = 0;
+    manoDealer.length = 0;
+    mazzo.length = 0;
+    partitaFinita = false;
+    mazzo.push(...creaMazzo());
+    mescolaMazzo(mazzo);
+    for (let i = 0; i < 2; i++) {
+        distribuisciCarte(mazzo, manoGiocatore, 1);
+        distribuisciCarte(mazzo, manoDealer, 1);
+    }
+    return {
+        manoGiocatore: manoGiocatore,
+        manoDealer: manoDealer
+    };
+}
