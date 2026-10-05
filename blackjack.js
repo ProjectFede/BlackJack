@@ -167,6 +167,17 @@ function mostraMano(elemento, mano, copriSeconda = false) {
     }
 }
 
+function aggiornaPulsanti() {
+    if (partitaFinita) {
+        document.getElementById('pulsante-pesca').style.display = 'none';
+        document.getElementById('pulsante-stai').style.display = 'none';
+    }
+    else {
+        document.getElementById('pulsante-pesca').style.display = '';
+        document.getElementById('pulsante-stai').style.display = '';
+    }
+}
+
 function aggiornaSchermata(messaggio = '') {
     mostraMano(document.getElementById('carte-giocatore'), manoGiocatore);
     mostraMano(document.getElementById('carte-dealer'), manoDealer, !partitaFinita);
@@ -174,6 +185,7 @@ function aggiornaSchermata(messaggio = '') {
     const manoVisibileDealer = partitaFinita ? manoDealer : manoDealer.slice(0, 1);
     document.getElementById('totale-dealer').textContent = calcolaValoreMano(manoVisibileDealer);
     document.getElementById('risultato').textContent = messaggio;
+    aggiornaPulsanti();
 }
 
 nuovaPartita();
