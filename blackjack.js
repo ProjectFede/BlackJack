@@ -1,8 +1,26 @@
-//VERSIONE STABILE V1.0.0
+const PUNTEGGIO_MASSIMO = 21;
+const SOGLIA_DEALER = 17; 
+const FIGURE = ['Jack', 'Donna', 'Re'];
 
 const composizioneMazzo = {
     semi: ['Cuori', 'Quadri', 'Fiori', 'Picche'],
     valori: ['Asso', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Donna', 'Re']
+};
+
+const mazzo = [];
+const manoGiocatore = [];
+const manoDealer = [];
+let partitaFinita = false;
+
+const elementi = {
+    carteGiocatore: document.getElementById('carte-giocatore'),
+    carteDealer: document.getElementById('carte-dealer'),
+    totaleGiocatore: document.getElementById('totale-giocatore'),
+    totaleDealer: document.getElementById('totale-dealer'),
+    risultato: document.getElementById('risultato'),
+    pulsantePesca: document.getElementById('pulsante-pesca'),
+    pulsanteStai: document.getElementById('pulsante-stai'),
+    pulsanteNuovaPartita: document.getElementById('nuova-partita')
 };
 
 function creaMazzo() {
@@ -15,36 +33,27 @@ function creaMazzo() {
     return carte;
 }
 
-function mescolaMazzo(carteMescolate) {
-    for (let i = carteMescolate.length - 1; i > 0; i--) {
+function mescolaMazzo(carte) {
+    for (let i = carte.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [carteMescolate[i], carteMescolate[j]] = [carteMescolate[j], carteMescolate[i]];
+        [carte[i], carte[j]] = [carte[j], carte[i]];
     }
-    return carteMescolate;
+    return carte;
 }
 
-const mazzo = creaMazzo();
-console.log(mazzo.length);
-
-function pescaCarte(mazzo) {
-    if (mazzo.length === 0) {
+function pescaCarte(carte) {
+    if (carte.length === 0) {
         throw new Error("Il mazzo è vuoto. Non ci sono più carte da pescare.");
     }
-    const cartaPescata = mazzo.shift();
-    console.log("Carta pescata:", cartaPescata);
-    console.log("Carte rimanenti nel mazzo:", mazzo.length);
-    return cartaPescata;
+    return carte.shift();
 }
-
-const manoGiocatore = [];
-const manoDealer = [];
-let partitaFinita = false;
 
 function distribuisciCarte(carte, mano, numeroCarte) {
     for (let i = 0; i < numeroCarte; i++) {
         mano.push(pescaCarte(carte));
     }
 }
+
 function calcolaValoreMano(mano) {
     let valoreTotale = 0;
     let numeroAssi = 0;
@@ -52,31 +61,21 @@ function calcolaValoreMano(mano) {
         if (carta.valore === 'Asso') {
             numeroAssi++;
             valoreTotale += 11;
-        } else if (['Jack', 'Donna', 'Re'].includes(carta.valore)) {
+        } else if (FIGURE.includes(carta.valore)) {
             valoreTotale += 10;
         } else {
             valoreTotale += parseInt(carta.valore, 10);
         }
     }
-    while (valoreTotale > 21 && numeroAssi > 0) {
+    while (valoreTotale > PUNTEGGIO_MASSIMO && numeroAssi > 0) {
         valoreTotale -= 10;
         numeroAssi--;
     }
     return valoreTotale;
 }
 
-function pescaDealer(mano, mazzo) {
-    let valoreMano = calcolaValoreMano(mano);
-    while (valoreMano < 17) {
-        const cartaPescata = pescaCarte(mazzo);
-        mano.push(cartaPescata);
-        valoreMano = calcolaValoreMano(mano);
-    }
-    return valoreMano;
-}
-
 function haBlackjack(mano) {
-    return mano.length === 2 && calcolaValoreMano(mano) === 21;
+    return mano.length === 2 && calcolaValoreMano(mano) === PUNTEGGIO_MASSIMO;
 }
 
 function determinaVincitore(manoDelGiocatore, manoDelDealer) {
@@ -85,30 +84,32 @@ function determinaVincitore(manoDelGiocatore, manoDelDealer) {
     const blackjackGiocatore = haBlackjack(manoDelGiocatore);
     const blackjackDealer = haBlackjack(manoDelDealer);
 
-    if (valoreGiocatore > 21) {
+    if (valoreGiocatore > PUNTEGGIO_MASSIMO) {
         return "Hai perso! Hai sballato.";
-    }
-    else if (blackjackGiocatore && blackjackDealer) {
+    } else if (blackjackGiocatore && blackjackDealer) {
         return "Pareggio! Entrambi avete un Blackjack!";
-    }
-    else if (blackjackGiocatore) {
+    } else if (blackjackGiocatore) {
         return "Hai vinto con un Blackjack!";
-    }
-    else if (blackjackDealer) {
+    } else if (blackjackDealer) {
         return "Hai perso! Il dealer ha un Blackjack.";
-    }
-    else if (valoreDealer > 21) {
+    } else if (valoreDealer > PUNTEGGIO_MASSIMO) {
         return "Hai vinto! Il dealer ha sballato.";
-    }
-    else if (valoreGiocatore > valoreDealer) {
+    } else if (valoreGiocatore > valoreDealer) {
         return "Hai vinto!";
-    }
-    else if (valoreGiocatore < valoreDealer) {
+    } else if (valoreGiocatore < valoreDealer) {
         return "Hai perso!";
-    }
-    else {
+    } else {
         return "Pareggio!";
     }
+}
+
+function pescaDealer(mano, carte) {
+    let valoreMano = calcolaValoreMano(mano);
+    while (valoreMano < SOGLIA_DEALER) {
+        mano.push(pescaCarte(carte));
+        valoreMano = calcolaValoreMano(mano);
+    }
+    return valoreMano;
 }
 
 function pescaGiocatore() {
@@ -117,7 +118,7 @@ function pescaGiocatore() {
     }
     manoGiocatore.push(pescaCarte(mazzo));
     let risultato = '';
-    if (calcolaValoreMano(manoGiocatore) > 21) {
+    if (calcolaValoreMano(manoGiocatore) > PUNTEGGIO_MASSIMO) {
         partitaFinita = true;
         risultato = determinaVincitore(manoGiocatore, manoDealer);
     }
@@ -140,18 +141,14 @@ function nuovaPartita() {
     manoGiocatore.length = 0;
     manoDealer.length = 0;
     mazzo.length = 0;
-    partitaFinita = false;
     mazzo.push(...creaMazzo());
     mescolaMazzo(mazzo);
     for (let i = 0; i < 2; i++) {
         distribuisciCarte(mazzo, manoGiocatore, 1);
         distribuisciCarte(mazzo, manoDealer, 1);
     }
-    aggiornaSchermata();
-    if (haBlackjack(manoGiocatore) || haBlackjack(manoDealer)) {
-        partitaFinita = true;
-        aggiornaSchermata(determinaVincitore(manoGiocatore, manoDealer));
-    }
+    partitaFinita = haBlackjack(manoGiocatore) || haBlackjack(manoDealer);
+    aggiornaSchermata(partitaFinita ? determinaVincitore(manoGiocatore, manoDealer) : '');
 }
 
 function mostraMano(elemento, mano, copriSeconda = false) {
@@ -171,24 +168,26 @@ function mostraMano(elemento, mano, copriSeconda = false) {
 
 function aggiornaPulsanti() {
     if (partitaFinita) {
-        document.getElementById('pulsante-pesca').style.display = 'none';
-        document.getElementById('pulsante-stai').style.display = 'none';
-    }
-    else {
-        document.getElementById('pulsante-pesca').style.display = '';
-        document.getElementById('pulsante-stai').style.display = '';
+        elementi.pulsantePesca.style.display = 'none';
+        elementi.pulsanteStai.style.display = 'none';
+    } else {
+        elementi.pulsantePesca.style.display = '';
+        elementi.pulsanteStai.style.display = '';
     }
 }
 
 function aggiornaSchermata(messaggio = '') {
-    mostraMano(document.getElementById('carte-giocatore'), manoGiocatore);
-    mostraMano(document.getElementById('carte-dealer'), manoDealer, !partitaFinita);
-    document.getElementById('totale-giocatore').textContent = calcolaValoreMano(manoGiocatore);
+    mostraMano(elementi.carteGiocatore, manoGiocatore);
+    mostraMano(elementi.carteDealer, manoDealer, !partitaFinita);
+    elementi.totaleGiocatore.textContent = calcolaValoreMano(manoGiocatore);
     const manoVisibileDealer = partitaFinita ? manoDealer : manoDealer.slice(0, 1);
-    document.getElementById('totale-dealer').textContent = calcolaValoreMano(manoVisibileDealer);
-    document.getElementById('risultato').textContent = messaggio;
+    elementi.totaleDealer.textContent = calcolaValoreMano(manoVisibileDealer);
+    elementi.risultato.textContent = messaggio;
     aggiornaPulsanti();
 }
 
-nuovaPartita();
+elementi.pulsantePesca.addEventListener('click', pescaGiocatore);
+elementi.pulsanteStai.addEventListener('click', stai);
+elementi.pulsanteNuovaPartita.addEventListener('click', nuovaPartita);
 
+nuovaPartita();
