@@ -152,22 +152,29 @@ function nuovaPartita() {
     }
 }
 
-function mostraMano(elemento, mano) {
+function mostraMano(elemento, mano, copriSeconda = false) {
     elemento.textContent = '';
-    for (const carta of mano) {
+    for (let i = 0; i < mano.length; i++) {
         const elementoCarta = document.createElement('span');
-        elementoCarta.className = 'carta';
-        elementoCarta.textContent = `${carta.valore} di ${carta.seme}`;
+        if (copriSeconda && i === 1) {
+            elementoCarta.className = 'carta coperta';
+            elementoCarta.textContent = 'Carta coperta';
+        } else {
+            elementoCarta.className = 'carta';
+            elementoCarta.textContent = `${mano[i].valore} di ${mano[i].seme}`;
+        }
         elemento.append(elementoCarta);
     }
 }
 
 function aggiornaSchermata(messaggio = '') {
     mostraMano(document.getElementById('carte-giocatore'), manoGiocatore);
-    mostraMano(document.getElementById('carte-dealer'), manoDealer);
+    mostraMano(document.getElementById('carte-dealer'), manoDealer, !partitaFinita);
     document.getElementById('totale-giocatore').textContent = calcolaValoreMano(manoGiocatore);
-    document.getElementById('totale-dealer').textContent = calcolaValoreMano(manoDealer);
+    const manoVisibileDealer = partitaFinita ? manoDealer : manoDealer.slice(0, 1);
+    document.getElementById('totale-dealer').textContent = calcolaValoreMano(manoVisibileDealer);
     document.getElementById('risultato').textContent = messaggio;
 }
 
 nuovaPartita();
+
