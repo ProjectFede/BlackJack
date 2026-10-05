@@ -1,3 +1,5 @@
+//VERSIONE STABILE V1.0.0
+
 const composizioneMazzo = {
     semi: ['Cuori', 'Quadri', 'Fiori', 'Picche'],
     valori: ['Asso', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Donna', 'Re']
