@@ -1,105 +1,434 @@
-body {
-    margin: 0;
-    background: #f3f3f3;
-    color: #222;
-    font-family: Arial, sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap');
+
+/* ===== Palette e misure: cambia qui per cambiare tutto ===== */
+:root {
+    --nero: #000;
+    --superficie: #0d0c15;
+    --superficie-2: #1a1827;
+    --bordo: #26233b;
+    --testo: #f1eefc;
+    --muted: #9490b0;
+    --lilla: #a995ff;
+    --rosa: #ff7ab0;
+    --burro: #ffd986;
+    --ciano: #7ee1f2;
+    --dorso: #5b43d6;
+
+    /* Le misure seguono l'altezza dello schermo, così tutto resta nella prima schermata */
+    --larghezza-carta: clamp(3rem, 9.5vh, 4.4rem);
+    --fiche: 3.2rem;
+    --altezza-pulsante: clamp(2.5rem, 7vh, 3rem);
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    background: var(--nero);
+    color: var(--testo);
+    font-family: "Nunito", ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-weight: 600;
+}
+
+/* ===== Titolo ===== */
 header {
-    padding: 24px 16px 12px;
+    padding: 0.6rem 1rem 0.25rem;
     text-align: center;
 }
 
 h1 {
-    margin-bottom: 0;
-    font-size: 32px;
+    margin: 0;
+    font-size: clamp(1.4rem, 3.8vh, 2rem);
+    font-weight: 900;
+    letter-spacing: 0.03em;
+    color: var(--lilla);
+    text-shadow: 0 0 20px rgba(169, 149, 255, 0.45);
 }
 
+/* ===== Struttura (telefono: una colonna) ===== */
 main {
-    max-width: 650px;
-    margin: 0 auto 24px;
-    padding: 16px;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    width: 100%;
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 0.4rem 0.75rem 0.9rem;
 }
 
 #gioco {
-    display: grid;
-    gap: 16px;
-    padding: 24px;
-    background: white;
-    border: 1px solid #d2d2d2;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
 }
 
+#mano-dealer { order: 1; }
+#mano-giocatore { order: 2; }
+#risultato { order: 3; }
+#controlli { order: 4; }
+
+/* ===== Pannelli ===== */
+.mano,
+#scommessa {
+    background: var(--superficie);
+    border: 2px solid var(--bordo);
+    border-radius: 20px;
+    padding: 0.6rem 0.9rem 0.8rem;
+}
+
+.mano h2,
+#scommessa h2 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--muted);
+}
+
+/* In ogni mano il titolo e il totale stanno sulla stessa riga, le carte sotto */
 .mano {
-    padding-bottom: 16px;
-    border-bottom: 1px solid #d2d2d2;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    row-gap: 0.45rem;
 }
 
 .mano h2 {
-    margin: 0 0 12px;
-    font-size: 18px;
-}
-
-.carte {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    min-height: 24px;
-}
-
-.carta {
-    padding: 4px 8px;
-    border-bottom: 2px solid #246b4a;
-    font-size: 15px;
+    grid-column: 1;
+    grid-row: 1;
 }
 
 .mano p {
-    margin: 12px 0 0;
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--muted);
 }
 
 .mano p span {
-    font-weight: bold;
+    display: inline-block;
+    min-width: 2.6rem;
+    padding: 0.05rem 0.7rem;
+    border: 2px solid var(--ciano);
+    border-radius: 999px;
+    color: var(--ciano);
+    font-weight: 900;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
 }
 
-#controlli {
+/* ===== Carte ===== */
+/* Le carte si restringono se sono molte, così non vanno mai a capo */
+.carte {
+    grid-column: 1 / -1;
+    grid-row: 2;
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: 0.5rem;
+    min-height: calc(var(--larghezza-carta) * 1.4);
+}
+
+.carta {
+    flex: 0 1 var(--larghezza-carta);
+    min-width: 0;
+    aspect-ratio: 5 / 7;
+    display: flex;
     align-items: center;
-}
-
-#controlli > button {
-    padding: 10px 16px;
-    border: 1px solid #246b4a;
-    border-radius: 3px;
-    background: white;
-    color: #246b4a;
-    cursor: pointer;
-    font: inherit;
-}
-
-#controlli > button:hover,
-#controlli > button:focus-visible {
-    background: #246b4a;
-    color: white;
-}
-
-#risultato {
-    min-height: 24px;
-    color: #246b4a;
-    font-weight: bold;
+    justify-content: center;
+    padding: 0.3rem;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    background: #fbf8ff;
+    color: #14121f;
+    border: 3px solid #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 0 #2d2942;
+    font-size: 0.7rem;
+    font-weight: 800;
+    line-height: 1.2;
     text-align: center;
 }
 
-@media (max-width: 44rem) {
+/* Il dorso ha anche la classe .carta: qui cambia solo ciò che serve */
+.carta.coperta {
+    background-color: var(--dorso);
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.28) 2px, transparent 2.5px);
+    background-size: 14px 14px;
+    border-color: #c4b8ff;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* Attive quando il JS aggiungerà la classe del seme */
+.carta.cuori,
+.carta.quadri {
+    color: #e5486f;
+}
+
+/* ===== Messaggio ===== */
+#risultato {
+    min-height: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--burro);
+    font-size: clamp(1rem, 3.6vw, 1.35rem);
+    font-weight: 900;
+    text-align: center;
+    text-wrap: balance;
+}
+
+/* ===== Comandi: pulsanti sempre su una griglia fissa, non si spostano ===== */
+#controlli {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: auto var(--altezza-pulsante);
+    align-content: start;
+    gap: 0.6rem;
+}
+
+#scommessa {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+        "titolo titolo"
+        "saldo  puntata"
+        "fiches fiches"
+        "conferma conferma";
+    gap: 0.5rem;
+    justify-items: center;
+    align-items: center;
+    text-align: center;
+}
+
+#scommessa h2 {
+    grid-area: titolo;
+}
+
+/* La frase di istruzioni occupa spazio e il titolo basta */
+#scommessa h2 + p {
+    display: none;
+}
+
+#scommessa p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+#scommessa p:has(#saldo) {
+    grid-area: saldo;
+}
+
+#scommessa p:has(#puntata-totale) {
+    grid-area: puntata;
+}
+
+#saldo,
+#scommessa strong {
+    color: var(--burro);
+    font-weight: 900;
+}
+
+#puntata-totale {
+    color: var(--ciano);
+    font-weight: 900;
+}
+
+#pulsante-pesca { grid-column: 1; grid-row: 2; }
+#pulsante-stai { grid-column: 2; grid-row: 2; }
+#nuova-partita { grid-column: 3; grid-row: 2; }
+
+/* ===== Pulsanti ===== */
+button {
+    width: 100%;
+    height: var(--altezza-pulsante);
+    padding: 0 0.6rem;
+    font: inherit;
+    font-weight: 800;
+    background: var(--superficie-2);
+    color: var(--testo);
+    border: 2px solid transparent;
+    border-radius: 999px;
+    box-shadow: 0 4px 0 var(--ombra, #05050a);
+    cursor: pointer;
+    transition: transform 0.08s ease, filter 0.15s ease;
+}
+
+button:hover:not(:disabled) {
+    filter: brightness(1.15);
+}
+
+button:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--ombra, #05050a);
+}
+
+button:disabled {
+    opacity: 0.35;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+button:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+}
+
+#pulsante-pesca {
+    background: var(--lilla);
+    color: #150e38;
+    --ombra: #6c58d6;
+}
+
+#pulsante-stai {
+    background: var(--rosa);
+    color: #3a0a1f;
+    --ombra: #bf4a80;
+}
+
+#conferma-puntata {
+    grid-area: conferma;
+    background: var(--burro);
+    color: #2b1d00;
+    --ombra: #c79a3a;
+}
+
+#nuova-partita {
+    border-color: var(--bordo);
+}
+
+/* ===== Fiches: anelli colorati ===== */
+#fiches {
+    grid-area: fiches;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.4rem;
+}
+
+.fiche {
+    --c: #f1eefc;
+    --anello: inset 0 0 0 3px #000, inset 0 0 0 4px var(--c);
+    width: 100%;
+    max-width: var(--fiche);
+    height: auto;
+    aspect-ratio: 1;
+    justify-self: center;
+    padding: 0;
+    background: transparent;
+    color: var(--c);
+    border: 3px solid var(--c);
+    border-radius: 50%;
+    box-shadow: var(--anello);
+    font-size: 0.62rem;
+    line-height: 1.15;
+}
+
+.fiche:hover:not(:disabled) {
+    background: var(--c);
+    color: #000;
+    filter: none;
+}
+
+.fiche:active:not(:disabled) {
+    transform: scale(0.93);
+    box-shadow: var(--anello);
+}
+
+.fiche:disabled {
+    box-shadow: var(--anello);
+}
+
+.fiche[data-valore="1"]   { --c: #f1eefc; }
+.fiche[data-valore="5"]   { --c: var(--rosa); }
+.fiche[data-valore="10"]  { --c: var(--ciano); }
+.fiche[data-valore="25"]  { --c: #8ef0b3; }
+.fiche[data-valore="50"]  { --c: #ffc27a; }
+.fiche[data-valore="100"] { --c: var(--lilla); }
+
+/* ===== Schermi larghi e telefoni in orizzontale: due colonne, tavolo a sinistra e comandi a destra ===== */
+@media (min-width: 860px), (min-width: 560px) and (orientation: landscape) {
+    :root {
+        --larghezza-carta: clamp(3rem, 12vh, 6rem);
+        --fiche: clamp(2.6rem, 8.5vh, 4.5rem);
+    }
+
+    body {
+        height: 100vh;
+        height: 100dvh;
+    }
+
     main {
-        padding: 8px;
+        padding: 0.5rem 1.25rem 1.25rem;
     }
 
     #gioco {
-        padding: 16px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 20rem;
+        grid-template-rows: auto auto auto;
+        grid-template-areas:
+            "dealer    controlli"
+            "risultato controlli"
+            "giocatore controlli";
+        align-content: center;
+        gap: 0.9rem 1.25rem;
     }
 
-    #controlli > button {
-        flex: 1 1 auto;
+    #mano-dealer { grid-area: dealer; }
+    #mano-giocatore { grid-area: giocatore; }
+    #risultato { grid-area: risultato; }
+
+    .mano,
+    #scommessa {
+        padding: 0.8rem 1.1rem 1rem;
+    }
+
+    .carta {
+        font-size: 0.85rem;
+    }
+
+    #controlli {
+        grid-area: controlli;
+        align-self: center;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: auto var(--altezza-pulsante) var(--altezza-pulsante);
+    }
+
+    #nuova-partita {
+        grid-column: 1 / -1;
+        grid-row: 3;
+    }
+
+    #fiches {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.6rem;
+    }
+
+    .fiche {
+        font-size: 0.72rem;
+    }
+
+    #risultato {
+        font-size: 1.3rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    button {
+        transition: none;
     }
 }
